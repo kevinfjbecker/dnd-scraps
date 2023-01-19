@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Maps</title>
+    <style>
+        /* div {
+            border: 1px solid steelblue;
+        } */
+
+        body {
+            font-family: Sans-Serif;
+        }
+
+        #container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            grid-auto-rows: minmax(42px, auto);
+        }
+
+        #global-action-bar {
+            grid-column: 1/4;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+        }
+
+        #detail-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+        }
+
+        #register {
+            grid-column: 1;
+            border: 1px solid steelblue;
+            padding: 0 5px 5px;
+        }
+
+        .register-entry {
+            width: 100%;
+            height: 100px;
+            border: 1px solid steelblue;
+            margin: 5px 0 0;
+            display: flex;
+            flex-flow: column;
+            justify-content: space-between;
+        }
+
+        .register-entry-id {
+            font-size: smaller;
+            color: dimgray;
+            text-align: right;
+            margin: 5px 5px 0 0;
+        }
+
+        .register-entry-title {
+            font-size: larger;
+            text-align: center;
+            margin: 0 0 5px 5px;
+        }
+
+        .register-entry-key {
+            font-size: smaller;
+            text-align: left;
+            margin: 0 0 5px 5px;
+            color: dimgray;
+        }
+
+        .focused {
+            border-width: 2px;
+        }
+
+        .selected {
+            background-color: lightblue;
+        }
+
+        #detail {
+            grid-column: 2 / 4;
+            border: 1px solid steelblue;
+            padding: 20px 10px 0 20px;
+        }
+
+        .detail-entry {
+            margin-bottom: 5px;
+        }
+
+        .detail-entry>button {
+            margin-left: 5px;
+        }
+
+        .detail-entry>label {
+            display: block;
+            font-size: small;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="global-action-bar">
+            <div>
+                <button id="new-map">New Map</button>
+            </div>
+        </div>
+        <div id="register">
+        </div>
+        <div id="detail">
+            <div id="detail-action-bar">
+                <div>
+                    <button id="detail-save">Save</button>
+                    <button id="detail-delete">Delete</button>
+                </div>
+                <div>
+                    <button id="edit-geometry">Edit Geometry</button>
+                    <button id="edit-token-list">Edit Token List</button>
+                </div>
+            </div>
+            <div id="detail-input-container"></div>
+            <div id="detail-thumbnail-container"></div>
+        </div>
+    </div>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script src="lib/uuid.js"></script>
+    <script>
+        class MapDetails {
+            title;
+            xlinkHref;
+            id;
+            svgWidth;
+            svgHeight;
+            imgWidth;
+            imgHeight;
+            xOffset;
+            yOffset;
+            squareWidth;
+            key;
+            tokenSetKey;
+            geometryKey;
+            combatantsKey;
+
+            constructor() {
+                this.key = getUuid();
+                this.tokenSetKey = getUuid();
+                this.geometryKey = getUuid();
+                this.combatantsKey = getUuid();
+            }
+        }
+    </script>
+    <script>
+        let gMaps = [];
+        let gThumbnail = null;
+
+        function updateRegister(mapList) {
+            const entries = d3.select('#register')
+                .selectAll('.register-entry')
+                .data(mapList, function (d) {
+                    return d.key;
+                });
+
+            const entriesEnter = entries.enter().append('div')
+                .classed('register-entry', true)
+                .on('mouseover', function () {
+                    d3.select(this).classed('focused', true);
+                })
+                .on('mouseout', function () {
+                    d3.select(this).classed('focused', false);
+                })
+                .on('click', function () {
+                    d3.selectAll('.register-entry').classed('selected', false);
+                    d3.select(this).classed('selected', true);
+                    const key = this.__data__.key;
+                    // gMaps could be a new array !== mapList from the closure.
+                    const mapDetail = gMaps.filter(m => m.key === key)[0];
+                    updateDetail(mapDetail);
+                });
+
+            entriesEnter.append('div')
+                .attr('class', 'register-entry-id')
+                .text(d => d.id);
+
+            entriesEnter.append('div')
+                .attr('class', 'register-entry-title')
+                .text(d => d.title)
+
+            entriesEnter.append('div')
+                .attr('class', 'register-entry-key')
+                .text(d => d.key);
+
+            entries.select('.register-entry-id').text(d => d.id);
+            entries.select('.register-entry-title').text(d => d.title);
+            entries.select('.register-entry-key').text(d => d.key);
+
+            entries.exit().remove();
+        }
+
+        function updateDetail(mapDetail) {
+            const data = Object
+                .entries(mapDetail)
+                .filter(e => ![
+                    'key',
+                    'tokenSetKey',
+                    'geometryKey',
+                    'combatantsKey'
+                ].some(k => k === e[0]));
+
+            const details = d3.select('#detail-input-container')
+                .selectAll('.detail-entry')
+                .data(data, function (d) {
+                    return d[0];
+                });
+
+            detailsEnter = details.enter().append('div')
+                .classed('detail-entry', true);
+
+            detailsEnter.append('label')
+                .attr('for', d => `detail-${d[0]}`)
+                .text(d => d[0]);
+
+            detailsEnter.append('input')
+                .attr('type', 'text')
+                .attr('id', d => `detail-${d[0]}`)
+                .attr('name', d => `detail-${d[0]}`)
+                //.attr('size', d => d[1] && d[1].length || 'default')
+                .each(function (d) { this.value = d[1]; });
+
+            detailsEnter.each(function (d) {
+                if (d[0] === 'xlinkHref') {
+                    d3.select(this).append('button')
+                        .text('Check')
+                        .on('click', function (d) {
+                            console.log('Check it!');
+                            const src = d3
+                                .select('#detail-xlinkHref')
+                                .node()
+                                .value;
+                            const img = new Image();
+                            img.addEventListener('load', function () {
+                                setValue('detail-imgWidth', img.width);
+                                setValue('detail-svgWidth', img.width);
+                                setValue('detail-imgHeight', img.height);
+                                setValue('detail-svgHeight', img.height);
+                                setThumbnail(img.src);
+                            }, false);
+                            img.src = src;
+                        });
+                }
+            });
+
+            details.select('input')
+                //.attr('size', d => d[1] && d[1].length || 'default')
+                .each(function (d) { this.value = d[1] || ''; });
+
+            setThumbnail(mapDetail.xlinkHref);
+        }
+
+        function setValue(id, value) {
+            d3.select(`#${id}`).node().value = value;
+        };
+
+        function setThumbnail(url) {
+            const container = document
+                .getElementById('detail-thumbnail-container');
+            if (!url) {
+                container.style.display = 'none';
+                return;
+            } else {
+                container.style.display = 'block';
+            }
+            const img = new Image();
+            img.src = url;
+            img.width = container.offsetWidth;
+            if (gThumbnail) {
+                container.replaceChild(img, gThumbnail);
+            } else {
+                container.appendChild(img);
+            }
+            gThumbnail = img;
+        }
+
+        function init() {
+            gMaps = getMapsFromLocalStorage();
+            if (!gMaps || gMaps.length < 1) {
+                return;
+            }
+            selectFirstEntryUpdateDisplay();
+        }
+
+        function selectFirstEntryUpdateDisplay() {
+            updateRegister(gMaps);
+            const entry = d3.select('.register-entry');
+            entry.classed('selected', true);
+            updateDetail(entry.datum());
+        }
+
+        init();
+
+        // ui /////////////////////////////////////////////////////////////////
+
+        d3.select('#detail-delete').on('click', () => {
+            const key = d3.select('.register-entry.selected').datum().key;
+            gMaps = gMaps.filter(m => m.key !== key);
+            save(gMaps);
+
+            selectFirstEntryUpdateDisplay();
+        });
+
+        d3.select('#detail-save').on('click', () => {
+            if (!gMaps || gMaps.length < 1) {
+                return;
+            }
+            const saved = Object.fromEntries(
+                d3.zip(
+                    d3.selectAll('.detail-entry').data().map(d => d[0]),
+                    d3.selectAll('.detail-entry input')
+                        .nodes()
+                        .map(n => n.value)
+                )
+            );
+            saved.key = d3.select('.register-entry.selected').datum().key;
+            gMaps = gMaps.map(m => m.key === saved.key ? saved : m);
+            save(gMaps);
+            updateRegister(gMaps);
+        });
+
+        d3.select('#new-map').on('click', () => {
+            gMaps.unshift(new MapDetails());
+            d3.selectAll('.register-entry').classed('selected', false);
+
+            selectFirstEntryUpdateDisplay();
+        });
+
+        // util ///////////////////////////////////////////////////////////////
+
+        function save(mapList) {
+            localStorage.setItem('MapList', JSON.stringify(mapList));
+        }
+
+        function getMapsFromLocalStorage() {
+            return JSON.parse(localStorage.getItem('MapList'));
+        }
+
+    </script>
+
+</body>
+
+</html>

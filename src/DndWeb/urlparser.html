@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2021 by kevinfjbecker (http://jsbin.com/temigen/5/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body>
+
+<script id="jsbin-javascript">
+
+console.log('?campaign=becker_lmop&map=ch#edit');
+
+const getTextParagraph = (s) => {
+  p = document.createElement('p');
+  p.innerText = s;
+  return p;
+};
+
+const e = document.createElement('div')
+
+const params = new URLSearchParams(location.search);
+
+e.append(getTextParagraph(params.get('campaign')));
+e.append(getTextParagraph(params.get('map')))
+e.append(getTextParagraph(location.hash));
+
+document.body.append(e)
+</script>
+</body>
+</html>

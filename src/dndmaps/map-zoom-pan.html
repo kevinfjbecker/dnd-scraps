@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Maps</title>
+    <style>
+        #controls {
+            background-color: white;
+            left: 0;
+            margin: 3px;
+            padding: 2px;
+            position: fixed;
+            top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <svg></svg>
+    <div id="controls">
+        <label for="map-list">Maps:</label>
+        <select name="map-list" id="map-list">
+        </select>
+    </div>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script>
+        const maps = [
+            {
+                "id": "lmop5",
+                "key": "bd26e3c4-e55f-46a9-a0e9-308d88afc5e1",
+                "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/3/44/lmop5.jpg",
+                "svgWidth": 900,
+                "svgHeight": 500,
+                "imgWidth": 1125,
+                "imgHeight": 784,
+                "xOffset": 0,
+                "yOffset": 0,
+                "squareWidth": 29
+            },
+            {
+                "id": "lmop3",
+                "key": "42a954de-8092-4477-bff2-d96fb354f0bf",
+                "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/3/42/lmop3.jpg",
+                "svgWidth": 900,
+                "svgHeight": 500,
+                "imgWidth": 1125,
+                "imgHeight": 784,
+                "xOffset": 0,
+                "yOffset": 0,
+                "squareWidth": 29
+            },
+        ];
+
+        const updateMapSelector = (mapList) => {
+            d3.select('#map-list')
+                .on('change', () => {
+                    updateMap(maps.filter(m => m.id === d3.event.target.value)[0])
+                })
+                .selectAll('option')
+                .data(mapList)
+                .join('option')
+                .attr('value', d => d.id)
+                .text(d => d.id)
+        };
+
+        // zoom
+        let zoom = d3.zoom()
+            .on('zoom', handleZoom);
+
+        const updateMap = (mapDetails) => {
+            const svg = d3.select('svg')
+                .attr('height', mapDetails.svgHeight)
+                .attr('width', mapDetails.svgWidth)
+                .call(zoom);
+
+            const background = svg.selectAll('.background')
+                .data([mapDetails])
+                .join('g')
+                .classed('background', true);
+
+            background.selectAll('.visible-area')
+                .data([mapDetails])
+                .join('image')
+                .classed('visible-area', true)
+                .attr('xlink:href', (d) => d.xlinkHref)
+                .attr('preserveAspectRatio', 'none')
+                .attr('x', (d) => d.xOffset)
+                .attr('y', (d) => d.yOffset)
+                .attr('width', (d) => d.imgWidth + 'px')
+                .attr('height', (d) => d.imgHeight + 'px');
+        };
+
+        // zoom
+        function handleZoom() {
+            // todo: try locking zoom & pan
+            // so that you stop in when pulling a corner out
+            // and maybe lock the zoom scale
+            // look at zoom.scaleExtent
+            // look at zoom.translateExtent
+            d3.select('g.background')
+                .attr('transform', d3.event.transform);
+        }
+
+        updateMap(maps[0]);
+        updateMapSelector(maps);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Map mapDetails</title>
+  <style>
+    .quick-input {
+      background-color: black;
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      margin: 3px;
+    }
+
+    .quick-input-field label {
+      background-color: black;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></svg>
+  <script src="https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js"></script>
+  <script>
+    const mapDetails = {
+      "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/2/798/tsc02.jpg",
+      "svgWidth": 3000,
+      "svgHeight": 3350,
+      "imgWidth": 3300,
+      "imgHeight": 4350,
+      "xOffset": -134,
+      "yOffset": -600,
+      "squareWidth": 30
+    };
+
+    d3.select('body').append('div')
+      .classed('quick-input', true);
+
+    const inputFields = d3.select('.quick-input').selectAll('.quick-input-field')
+      .data(Object.entries(mapDetails))
+      .enter()
+      .append('div')
+      .classed('quick-input-field', true);
+
+    inputFields.append('label')
+      .text(d => d[0]);
+
+    inputFields.append('input')
+      .attr('value', d => d[1]);
+
+    inputFields.append('button')
+      .text('Go')
+      .on('click', function () {
+        const key = d3.select(this).datum()[0];
+        const value = this.previousElementSibling.value;
+        mapDetails[key] = !isNaN(value) && +value || value;
+        updateMap();
+      });
+
+    // ///////////////////////////////////////////////////////////// fogofwar.js //
+
+    const svg = d3.select('svg')
+      .attr('height', mapDetails.svgHeight)
+      .attr('width', mapDetails.svgWidth);
+    const wrapper = svg.append('g').classed('map-wrapper', true);
+    const background = wrapper.append('g').classed('background', true);
+
+    function updateMap() {
+
+      d3.select('svg')
+        .attr('height', mapDetails.svgHeight)
+        .attr('width', mapDetails.svgWidth);
+
+      const mapImage = d3.select('g.background').selectAll('image')
+        .data([mapDetails]);
+
+      mapImage.enter()
+        .append('image')
+        .classed('visibleArea', true)
+        .attr('xlink:href', (d) => d.xlinkHref)
+        .attr('preserveAspectRatio', 'none')
+        .attr('x', (d) => d.xOffset)
+        .attr('y', (d) => d.yOffset)
+        .attr('height', (d) => d.imgHeight + 'px')
+        .attr('width', (d) => d.imgWidth + 'px');
+
+      mapImage
+        .attr('xlink:href', (d) => d.xlinkHref)
+        .attr('preserveAspectRatio', 'none')
+        .attr('x', (d) => d.xOffset)
+        .attr('y', (d) => d.yOffset)
+        .attr('height', (d) => d.imgHeight + 'px')
+        .attr('width', (d) => d.imgWidth + 'px');
+
+    }
+    updateMap();
+
+  </script>
+</body>
+
+</html>

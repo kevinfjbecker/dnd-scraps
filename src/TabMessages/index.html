@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Message Receiver</title>
+</head>
+
+<body>
+    <h1>Open the Console.</h1>
+    <script>
+        window.addEventListener("message", (event) => {
+            console.log(`Message: "${event.data}", received from ${event.origin}`);
+            event.source.postMessage(`Echo: ${event.data}`,event.origin);
+        }, false);
+    </script>
+</body>
+
+</html>

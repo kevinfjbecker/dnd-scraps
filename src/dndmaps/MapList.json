@@ -1,0 +1,93 @@
+[
+    {
+        "title": "Cragmaw Castle",
+        "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/3/44/lmop5.jpg",
+        "id": "lmop5",
+        "svgWidth": "1125",
+        "svgHeight": "784",
+        "imgWidth": "1125",
+        "imgHeight": "784",
+        "xOffset": "0",
+        "yOffset": "0",
+        "squareWidth": "29",
+        "key": "bd26e3c4-e55f-46a9-a0e9-308d88afc5e1"
+    },
+    {
+        "title": "Redbrand Hideout",
+        "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/3/42/lmop3.jpg",
+        "id": "lmop3",
+        "svgWidth": "1125",
+        "svgHeight": "784",
+        "imgWidth": "1125",
+        "imgHeight": "784",
+        "xOffset": "0",
+        "yOffset": "0",
+        "squareWidth": "29",
+        "key": "42a954de-8092-4477-bff2-d96fb354f0bf"
+    },
+    {
+        "title": "The Sunless Citadel: Fortress Level",
+        "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/2/797/tsc01.jpg",
+        "id": "tsc01",
+        "svgWidth": "2008",
+        "svgHeight": "2080",
+        "imgWidth": "2008",
+        "imgHeight": "4160",
+        "xOffset": "0",
+        "yOffset": "-2080",
+        "squareWidth": "30",
+        "key": "45a49fe6-1194-434a-bd51-b5a42f314fb8"
+    },
+    {
+        "title": "The Sunless Citadel: Grove Level",
+        "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/2/798/tsc02.jpg",
+        "id": "tsc02",
+        "svgWidth": "3300",
+        "svgHeight": "4350",
+        "imgWidth": "3300",
+        "imgHeight": "4350",
+        "xOffset": "0",
+        "yOffset": "0",
+        "squareWidth": "36",
+        "key": "9e494980-751a-4292-8302-4f89cb623c0c"
+    },
+    {
+        "title": "Wave Echo Cave",
+        "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/3/46/lmop7.jpg",
+        "id": "lmop7",
+        "svgWidth": "2250",
+        "svgHeight": "3068",
+        "imgWidth": "2250",
+        "imgHeight": "3068",
+        "xOffset": "0",
+        "yOffset": "0",
+        "squareWidth": "24",
+        "key": "adcb1336-b0c3-47da-9f75-b42f0417023a"
+    },
+    {
+        "title": "Xanathar Guild Hideout",
+        "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/4/266/315242-xanathar-guild-hideout.jpg",
+        "id": "wdhxgh",
+        "svgWidth": "",
+        "svgHeight": "",
+        "imgWidth": "",
+        "imgHeight": "",
+        "xOffset": "",
+        "yOffset": "",
+        "squareWidth": "",
+        "key": "5e8362f6-0e36-445f-8f8e-55f5792df6d7"
+    },
+    {
+        "title": "Zhentarim Hideout",
+        "xlinkHref": "https://media-waterdeep.cursecdn.com/attachments/4/265/315243-zhentarim-warehouse.jpg",
+        "id": "wdhzh",
+        "svgWidth": "2063",
+        "svgHeight": "1425",
+        "imgWidth": "2063",
+        "imgHeight": "1425",
+        "xOffset": "0",
+        "yOffset": "0",
+        "squareWidth": "",
+        "key": "5fcf91f6-5301-4f5a-becf-270f2019cba8"
+    }
+]

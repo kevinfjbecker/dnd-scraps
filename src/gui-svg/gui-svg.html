@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUI SVG</title>
+    <style>
+        svg {
+            border: 1px solid black
+        }
+    </style>
+</head>
+<body>
+    <svg width="500" height="300"></svg>
+    <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.17"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        const GUI = lil.GUI
+        const gui = new GUI()
+
+        const data = [
+            {
+                name: "Shadrach",
+                index: 0,
+                r: 30,
+                cx: 125,
+                cy: 75,
+                "fill-color": '0xff0000',
+            },
+            {
+                name: "Meshach",
+                index: 1,
+                r: 30,
+                cx: 250,
+                cy: 150,
+                "fill-color": '0x00ff00',
+            },
+            {
+                name: "Abednego",
+                index: 2,
+                r: 30,
+                cx: 375,
+                cy: 225,
+                "fill-color": '0x0000ff',
+            },
+        ]
+
+        const svg = d3.select('svg')
+        
+        const balls = svg.selectAll('circle')
+            .data(data).enter()
+            .append('circle')
+                .attr('r', d => d.r)
+                .attr('cx', d => d.cx)
+                .attr('cy', d => d.cy)
+                .style('fill', d => d['fill-color'].replace('0x', '#'))
+                .on('click', function(e, d) {
+                    gui.title(d.name)
+                    // console.log(e)
+                    // console.log(d)
+                    clear = gui.controllers.slice()
+                    clear.forEach(x => x.destroy())
+                    Object
+                        .keys(d)
+                        .forEach((k) => {
+                            let controller = null
+                            if(k.includes('-')) {
+                                controller = gui.addColor(data[d.index], k)
+                            }
+                            else {
+                                controller = gui.add(data[d.index], k)
+                            }
+                            controller.onChange(update)
+                        })
+                    })
+
+        const update = () =>
+        {
+            svg.selectAll('circle')
+                .attr('r', d => d.r)
+                .attr('cx', d => d.cx)
+                .attr('cy', d => d.cy)
+                .style('fill', d => d['fill-color'].replace('0x', '#'))
+        }
+            
+    </script>   
+</body>
+</html>
