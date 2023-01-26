@@ -1,2 +1,2 @@
 # dnd-scraps
-Some ideas most of them half-baekd
+Some ideas; most of them half-baekd
